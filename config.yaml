@@ -1,0 +1,152 @@
+system:
+  version: 1.0.0
+  stock_universe_size: 30
+  retrain_schedule: monthly
+  retrain_day: saturday
+  log_level: INFO
+watchlist:
+  '300260': 新莱应材
+  '688400': 凌云光
+  '600760': 中航沈飞
+  '601899': 紫金矿业
+  '689009': 九号公司-WD
+  '603259': 药明康德
+  002698: 博实股份
+  '300442': 润泽科技
+  '601398': 工商银行
+  000338: 潍柴动力
+  '600031': 三一重工
+  '002415': 海康威视
+  '600025': 华能水电
+data:
+  primary_source: baostock
+  fallback_source: akshare
+  cache_days: 7
+  storage_format: parquet
+  history_years: 3
+  adjust_type: hfq
+  minute_enabled: false
+  minute_freq: '5'
+  minute_poll_interval: 300
+factors:
+  technical:
+  - name: sma5
+    type: sma
+    params:
+      length: 5
+  - name: sma10
+    type: sma
+    params:
+      length: 10
+  - name: sma20
+    type: sma
+    params:
+      length: 20
+  - name: sma60
+    type: sma
+    params:
+      length: 60
+  - name: ema12
+    type: ema
+    params:
+      length: 12
+  - name: ema26
+    type: ema
+    params:
+      length: 26
+  - name: rsi14
+    type: rsi
+    params:
+      length: 14
+  - name: macd
+    type: macd
+    params:
+      fast: 12
+      slow: 26
+      signal: 9
+  - name: bbands
+    type: bbands
+    params:
+      length: 20
+      std: 2
+  - name: atr14
+    type: atr
+    params:
+      length: 14
+  - name: obv
+    type: obv
+    params: {}
+  - name: kdj
+    type: kdj
+    params:
+      k: 9
+      d: 3
+  fundamental:
+  - name: pe_ttm
+    enabled: true
+  - name: pb
+    enabled: true
+  - name: ps_ttm
+    enabled: true
+  - name: roe_ttm
+    enabled: true
+  sentiment:
+  - name: news_sentiment
+    enabled: false
+model:
+  type: lstm
+  sequence_length: 60
+  hidden_units: 64
+  num_layers: 1
+  dropout: 0.3
+  batch_size: 64
+  learning_rate: 0.001
+  max_epochs: 100
+  early_stopping_patience: 10
+  class_balance: weighted_loss
+  train_years: 3
+  val_months: 3
+  device: auto
+signal:
+  market_mode: swing
+  base_buy_threshold: 0.55
+  dynamic_threshold: true
+  thresholds:
+    low_volatility:
+      buy: 0.58
+      sell: 0.45
+    medium_volatility:
+      buy: 0.55
+      sell: 0.45
+    high_volatility:
+      buy: 0.62
+      sell: 0.4
+risk:
+  stop_loss_pct: 0.08
+  trailing_stop_pct: 0.05
+  time_stop_days: 20
+  time_stop_min_return: 0.02
+  max_position_pct: 0.2
+  daily_loss_limit: 0.03
+  consecutive_loss_count: 5
+  max_drawdown_defensive: 0.15
+  blacklist_trigger_count: 3
+  blacklist_days: 30
+  min_listing_days: 60
+  exclude_st: true
+position:
+  base_position_pct: 0.1
+  min_position_pct: 0.05
+  max_position_pct: 0.2
+  win_rate_base: 0.55
+backtest:
+  init_cash: 1000000
+  commission: 0.00025
+  stamp_duty: 0.001
+  slippage: 0.001
+  benchmark: '000300'
+explain:
+  enabled: true
+  cache_hours: 24
+  timeout_seconds: 60
+  top_n_features: 5

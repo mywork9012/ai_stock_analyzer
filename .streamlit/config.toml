@@ -1,0 +1,5 @@
+# Streamlit Cloud 应用配置
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
