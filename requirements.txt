@@ -1,6 +1,6 @@
 # ============================================================
-# AI股票量化分析软件 V1.0 依赖清单 - Streamlit Cloud 部署版
-# Python 3.11（由 .python-version 锁定）
+# AI股票量化分析软件 V1.0 依赖清单 - Streamlit Cloud 最终部署版
+# Python 3.14（Streamlit Cloud 硬锁定）
 # ============================================================
 
 # Web框架
@@ -14,23 +14,23 @@ requests>=2.31.0
 
 # 数据处理
 pandas>=2.0.0,<3.0.0
-# Python 3.11 下 numpy 1.x 有预编译 wheel，保留上限保证 vectorbt 兼容性
-numpy>=1.24.0,<2.0.0
+# [修复] Python 3.14 只有 numpy 2.x 的预编译 wheel，移除 <2.0.0 上限
+numpy>=2.0.0
 pyarrow>=14.0.0
 
 # 技术指标
-# [修复] pandas-ta 0.4.x 强依赖 numba，numba 硬限制 Python <3.14
-#        Python 3.11 环境下 numba 可正常安装，此行在 3.11 下可用
-# [备用] 若仍报 numba 错误，可改为纯 Python 方案：ta>=0.10.2（无 numba 依赖）
-pandas-ta==0.4.71b0
+# [移除] pandas-ta：依赖 numba，numba 硬限 Python <3.14，无法安装
+# [无需替换] factor_engine.py 内置完整的纯 numpy/pandas 实现（_calc_builtin）
+# 覆盖：SMA/EMA/RSI/MACD/布林带/ATR/OBV/KDJ/量比，功能完整
 
 # 深度学习
 torch>=2.0.0,<3.0.0
 scikit-learn>=1.3.0
 
 # 回测引擎
-# 锁定 0.28.5，1.0.0 为破坏性升级
-vectorbt==0.28.5
+# [移除] vectorbt：内部依赖 numba，Python 3.14 下运行时崩溃
+# [无需替换] backtest_engine.py 已内置手动回测引擎（_run_manual_backtest）
+# 含：资金曲线/年化收益/Sharpe/MDD/Calmar/胜率/盈亏比，功能完整
 
 # 可视化
 plotly>=5.18.0
@@ -38,10 +38,8 @@ pyecharts>=2.0.4
 streamlit-echarts>=0.4.0
 
 # 可解释性
-# [修复] shap 0.51.0 依赖 llvmlite，llvmlite 不支持 Python 3.14
-#        Python 3.11 下 shap + llvmlite 正常安装
-# [原始需求注释] V1.0 暂用占位，V2.0 异步启用
-shap>=0.44.0
+# [移除] shap：依赖 llvmlite，Python 3.14 下编译失败
+# 原需求注释已说明：V1.0 暂用占位，V2.0 异步启用，移除不影响功能
 
 # 数据库
 sqlalchemy>=2.0.0
